@@ -1,8 +1,10 @@
-# Terraform Azure Module: key-vault
+# security/key-vault
 
-Creates an Azure Key Vault instance optionally including some secrets, certificates and keys.
+Terraform module which creates an Azure Key Vault instance.
 
-Supports a list of Azure AD user principal names which should get full access to the newly created key vault instance.
+The newly created Key Vault will only accept Azure AD RBAC. By default, the current user / service principal running
+this module will become `Key Vault Administrator` of the Azure Key Vault. Additionally, the group IDs of Azure AD
+groups can be specified via variable `key_vault_admin_group_ids` whose members are supposed become administrators as well.
 
 ## Input Variables
 
