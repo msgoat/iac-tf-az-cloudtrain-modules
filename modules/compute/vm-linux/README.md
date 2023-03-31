@@ -1,6 +1,6 @@
 # Terraform Module pipeline/sonarqube/virtual-machine
 
-Creates a virtual machine running SonarQube behind a NGinX reverse proxy and an Azure SQL Server database.
+Creates a virtual machine.
 
 ## Input Variables
 
