@@ -29,7 +29,7 @@ A changelog can be found in [changelog.md](changelog.md).
 
 ## Status
 
-![Build status]()
+![Build status](https://codebuild.eu-west-1.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiK2VWRThzb0J1bkNlMFBhM0FLL0ZoUDlGa0ZRSUxFdmMrYTRlNm5vUklWTUE5c0V4TlJWcEFyUHE4TkVZcmk5SXg2WjB2SDZybUJNdjNmOGdhanBmTlFvPSIsIml2UGFyYW1ldGVyU3BlYyI6InlRUm9BdXZoaGtJSnUxU2kiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=main)
 
 ## Provided Terraform modules
 
