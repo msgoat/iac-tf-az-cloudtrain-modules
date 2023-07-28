@@ -1,0 +1,53 @@
+version: 0.2
+
+env:
+  secrets-manager:
+    SONARQUBE_TOKEN: "cloudtrain-codebuild-sonarqube:token"
+    GITHUB_TOKEN: "cloudtrain-codebuild-github:msgoat_pat"
+
+phases:
+  install:
+    on-failure: ABORT
+    commands:
+      - echo "Running phase install"
+      - echo "Download and run common installation script"
+      - aws s3 cp s3://s3-eu-west-1-cloudtrain-codebuild-shared/cloudtrain-codebuild-install-terraform.sh ~/
+      - chmod u+x ~/cloudtrain-codebuild-install-terraform.sh
+      - ~/cloudtrain-codebuild-install-terraform.sh
+      - echo "Install SonarQube Scanner"
+      - export SONARQUBE_SCANNER_VERSION=4.8.0.2856
+      - curl -SL https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-$SONARQUBE_SCANNER_VERSION.zip -o /tmp/sonar-scanner-cli.zip
+      - unzip /tmp/sonar-scanner-cli.zip -d /tmp
+      - sudo mv /tmp/sonar-scanner-$SONARQUBE_SCANNER_VERSION /usr/bin/sonar-scanner
+      - sudo chmod a+r -R /usr/bin/sonar-scanner
+      - sudo chmod a+x /usr/bin/sonar-scanner/bin/sonar-scanner
+      - /usr/bin/sonar-scanner/bin/sonar-scanner --version
+  pre_build:
+    on-failure: ABORT
+    commands:
+      - echo "Running phase pre_build"
+  build:
+    on-failure: ABORT
+    commands:
+      - echo "Running phase build"
+      - export GIT_BRANCH=${CODEBUILD_WEBHOOK_HEAD_REF:11}
+      - export VERSION_REVISION=$(<revision.txt)
+      - export VERSION_CHANGELIST=${GIT_BRANCH:-main}
+      - export VERSION_SHA1=${CODEBUILD_RESOLVED_SOURCE_VERSION:0:8}
+      - export PROJECT_VERSION=$VERSION_REVISION.$VERSION_CHANGELIST.$VERSION_SHA1
+      - echo "Checking Terraform code quality of version [$PROJECT_VERSION]"
+      - /usr/bin/sonar-scanner/bin/sonar-scanner -Dsonar.projectVersion=$PROJECT_VERSION -Dsonar.login=$SONARQUBE_TOKEN
+      - echo "Tag branch [$VERSION_CHANGELIST] with git tag [$PROJECT_VERSION] on behalf of CodeBuild initiator [$CODEBUILD_INITIATOR] and GitHub actor [$CODEBUILD_WEBHOOK_ACTOR_ACCOUNT_ID]"
+      - git config user.name "cloudtrain-codebuild"
+      - git config user.email "cloudtrain.codebuild@msg.group"
+      - git tag -a $PROJECT_VERSION -m "$CODEBUILD_BUILD_ARN"
+      - git remote set-url origin "https://$GITHUB_TOKEN@github.com/msgoat/iac-tf-aws-cloudtrain-modules.git"
+      - git push origin HEAD:$VERSION_CHANGELIST $PROJECT_VERSION
+  post_build:
+    commands:
+      - echo "Running phase post_build"
+
+cache:
+  paths:
+    - "/root/.m2/**/*"
+    - "/root/.sonar/cache/**/*"

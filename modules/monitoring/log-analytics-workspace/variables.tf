@@ -28,20 +28,14 @@ variable solution_fqn {
   type = string
 }
 
-variable resource_group_name {
-  description = "The name of the resource group supposed to own all allocated resources"
+variable resource_group_id {
+  description = "Unique identifier of the resource group supposed to own all allocated resources"
   type = string
 }
 
-variable resource_group_location {
-  description = "The location of the resource group supposed to own all allocated resources"
+variable workspace_name {
+  description = "Logical name of the log analytics workspace"
   type = string
-}
-
-variable azure_monitor_enabled {
-  description = "Controls if a log analytics workspace should be created"
-  type = bool
-  default = true
 }
 
 variable log_analytics_workspace_sku {

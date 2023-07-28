@@ -6,6 +6,31 @@ Originally developed for msg's `Cloud Training Program` and `Cloud Expert Progra
 
 > Still work in progress! Provided AS IS without any warranties!
 
+## Module Versioning
+
+This terraform multi-module is versioning via git tags. The main revision number according to semantic versioning
+is stored in file [revision.txt](revision.txt). During the build further parts like branch name and short commit hash
+are added to the tag name as well.
+
+So if revision is `1.1.1` and the branch is `main` and the short commit hash is `12345678` the git tag name is `1.1.1.main.12345678`.
+
+Whenever you want to pin the module version used in your terraform live code to a specific version
+like `1.1.1.main.12345678`, add the corresponding tag name to the modules `source` attribute:
+
+```text
+module "eks_cluster" {
+    source = "git::https://github.com/msgoat/iac-tf-az-cloudtrain-modules.git//modules/terraform/remote-state?ref=1.1.1.main.12345678"
+}
+```
+
+## Release Information
+
+A changelog can be found in [changelog.md](changelog.md).
+
+## Status
+
+![Build status]()
+
 ## Provided Terraform modules
 
 | Module Name                                                                 | Module Source                                     | Description                                                                |

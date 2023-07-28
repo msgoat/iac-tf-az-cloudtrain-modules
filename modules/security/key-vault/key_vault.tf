@@ -1,9 +1,9 @@
 locals {
-  key_vault_name = "kv-${var.solution_fqn}"
+  kv_name = "kv-${var.solution_fqn}-${var.key_vault_name}"
 }
 
 resource "azurerm_key_vault" "vault" {
-  name                            = local.key_vault_name
+  name                            = local.kv_name
   location                        = data.azurerm_resource_group.given.location
   resource_group_name             = data.azurerm_resource_group.given.name
   tenant_id                       = data.azurerm_client_config.current.tenant_id
@@ -21,7 +21,7 @@ resource "azurerm_key_vault" "vault" {
   }
 
   tags = merge({
-    "Name" = local.key_vault_name
+    "Name" = local.kv_name
   }, local.module_common_tags)
 
   depends_on = [azurerm_role_assignment.creator]

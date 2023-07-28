@@ -1,20 +1,17 @@
 terraform {
   required_providers {
     azurerm = {
-      version = "~> 3.0"
+      version = "~> 3.41"
     }
     null = {
       version = "~> 3.0"
     }
     kubernetes = {
-      version = "~> 2.1"
-    }
-    time = {
-      version = "~> 0.7"
+      version = "~> 2.17"
     }
   }
 }
 
 locals {
-  module_common_tags = var.common_tags
+  module_common_tags = merge(var.common_tags, {TerraformModule = "aks/aksCluster"})
 }

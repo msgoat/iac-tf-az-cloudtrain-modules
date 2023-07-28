@@ -6,7 +6,6 @@ locals {
     accessibility        = snt.accessibility
     role                 = snt.role
     cidr                 = cidrsubnet(var.network_cidr, snt.newbits, i + 1)
-    tags                 = snt.tags
   }]
   subnet_template_keys    = [for snt in var.subnet_templates : snt.name]
   subnet_templates_by_key = zipmap(local.subnet_template_keys, local.subnet_template_values)
@@ -22,13 +21,15 @@ resource "azurerm_subnet" "subnets" {
 }
 
 locals {
-  subnets = [for snt in local.subnet_template_values : {
-    subnet_id            = azurerm_subnet.subnets[snt.subnet_key].id
-    subnet_name          = snt.subnet_name
-    subnet_template_name = snt.subnet_template_name
-    accessibility        = snt.accessibility
-    role                 = snt.role
-  }]
+  subnet_infos = [
+    for snt in local.subnet_template_values : {
+      subnet_name          = snt.subnet_name
+      subnet_id            = azurerm_subnet.subnets[snt.subnet_key].id
+      subnet_template_name = snt.subnet_template_name
+      accessibility        = snt.accessibility
+      role                 = snt.role
+    }
+  ]
 }
 
 

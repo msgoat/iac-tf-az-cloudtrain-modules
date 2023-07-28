@@ -81,8 +81,8 @@ nodeSets:
 - name: default
   count: 1
   config:
-    # Comment out when setting the vm.max_map_count via initContainer, as these are mutually exclusive.
-    # For production workloads, it is strongly recommended to increase the kernel setting vm.max_map_count to 262144
+    # Comment out when setting the vm-linux-bak.max_map_count via initContainer, as these are mutually exclusive.
+    # For production workloads, it is strongly recommended to increase the kernel setting vm-linux-bak.max_map_count to 262144
     # and leave node.store.allow_mmap unset.
     # ref: https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-virtual-memory.html
     #

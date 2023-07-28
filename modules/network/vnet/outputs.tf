@@ -3,12 +3,12 @@ output "vnet_id" {
   value       = azurerm_virtual_network.vnet.id
 }
 
-output "vnet_fqn" {
+output "vnet_name" {
   description = "Fully qualified name of the newly created VNet."
   value       = azurerm_virtual_network.vnet.name
 }
 
 output "subnets" {
   description = "Information about all created subnets"
-  value       = local.subnets
+  value       = local.subnet_infos
 }

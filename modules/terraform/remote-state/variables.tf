@@ -18,13 +18,18 @@ variable solution_stage {
   type = string
 }
 
+variable solution_fqn {
+  description = "Fully qualified name of this Azure solution"
+  type = string
+}
+
 variable common_tags {
   description = "Map of common tags to be attached to all managed Azure resources"
   type = map(string)
 }
 
-variable backend_configuration_file {
-  description = "Path name of a Terraform backend configuration file supposed to contain partial backend configuration values; not created if left empty"
-  type = string
-  default = ""
+variable "backend_name" {
+  description = "Name of the Terraform backend"
+  type        = string
+  default     = "terraform"
 }

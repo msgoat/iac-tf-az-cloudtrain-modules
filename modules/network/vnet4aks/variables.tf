@@ -23,13 +23,13 @@ variable solution_fqn {
   type = string
 }
 
-variable resource_group_name {
-  description = "The name of the resource group supposed to own all allocated resources"
-  type = string
+variable common_tags {
+  description = "Map of common tags to be attached to all managed Azure resources"
+  type = map(string)
 }
 
-variable resource_group_location {
-  description = "The location of the resource group supposed to own all allocated resources"
+variable resource_group_id {
+  description = "The unique identifier of the resource group supposed to own all allocated resources"
   type = string
 }
 
@@ -41,9 +41,4 @@ variable network_name {
 variable network_cidr {
   description = "CIDR block of the network"
   type = string
-}
-
-variable common_tags {
-  description = "Map of common tags to be attached to all managed Azure resources"
-  type = map(string)
 }

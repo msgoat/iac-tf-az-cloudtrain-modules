@@ -23,6 +23,11 @@ variable "solution_fqn" {
   type        = string
 }
 
+variable "common_tags" {
+  description = "Map of common tags to be attached to all managed Azure resources"
+  type        = map(string)
+}
+
 variable "resource_group_id" {
   description = "Unique identifier of the resource group supposed to own all allocated resources"
   type        = string
@@ -38,9 +43,10 @@ variable "network_cidr" {
   type        = string
 }
 
-variable "common_tags" {
-  description = "Map of common tags to be attached to all managed Azure resources"
-  type        = map(string)
+variable "nat_strategy" {
+  description = "NAT strategy to be applied to the VNet. Possible values are: NAT_NONE (no NAT gateways), NAT_GATEWAY_SINGLE (one NAT gateway for all AZs) or NAT_GATEWAY_AZ (one NAT gateway per AZ)"
+  type        = string
+  default     = "NAT_NONE"
 }
 
 variable "subnet_templates" {
@@ -50,12 +56,5 @@ variable "subnet_templates" {
     accessibility = string      # accessibility of the subnet ("public" or "private")
     role          = string      # role or responsibility of the subnet; can be used to find all subnets with matching roles
     newbits       = number      # additional bits to extend the prefix of this subnet
-    tags          = map(string) # Tags to be attached to the subnet
   }))
-}
-
-variable "nat_strategy" {
-  description = "NAT strategy to be applied to the VNet. Possible values are: NAT_NONE (no NAT gateways), NAT_GATEWAY_SINGLE (one NAT gateway for all AZs) or NAT_GATEWAY_AZ (one NAT gateway per AZ)"
-  type        = string
-  default     = "NAT_NONE"
 }
