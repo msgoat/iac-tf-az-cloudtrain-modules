@@ -39,6 +39,12 @@ module vnet {
       accessibility = "public"
       role = "InternetFacingContainer"
       newbits = 8
+    },
+    {
+      name = "loadbalancer"
+      accessibility = "private"
+      role = "InternalLoadBalancerContainer"
+      newbits = 8
     }
   ]
 }
