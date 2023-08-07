@@ -10,10 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ## [1.2.0] - 2023-08-07
+### Added
+- added new variables to define subnets for system pools and user pools to module container/ask/cluster
 ### Changed
 - module network/vnet4aks returns specific subnet IDs now to simplify further usage of subnets
 - improved documentation of module network/vnet
 - improved overall documentation
+- simplified usage of module container/aks/cluster by introducing optional values to node pool templates
 
 ## [1.0.0] - 2023-07-25
 ### Added
