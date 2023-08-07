@@ -9,9 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 ### Fixed
 
-## [1.1.0] - 2023-07-31
-### Added
-- sonarqube scanner now breaks builds after quality gate failure
+## [1.2.0] - 2023-08-07
+### Changed
+- module network/vnet4aks returns specific subnet IDs now to simplify further usage of subnets
+- improved documentation of module network/vnet
+- improved overall documentation
 
 ## [1.0.0] - 2023-07-25
 ### Added
