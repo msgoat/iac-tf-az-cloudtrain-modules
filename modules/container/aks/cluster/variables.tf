@@ -141,22 +141,34 @@ variable azure_monitor_enabled {
 }
 
 variable node_pool_templates {
-  description = "Information about node pools to be added to the AKS cluster; must contain at least on with role system"
+  description = "Information about node pools to be added to the AKS cluster; must contain at least one with role system"
   type = list(object({
-    enabled = bool
-    name = string
-    role = string
-    vm_sku = string
-    max_size = number
-    min_size = number
-    desired_size = number
-    max_surge = string
-    kubernetes_version = string
-    os_disk_size = number
-    subnet_id = string
-    labels = map(string)
-    taints = list(string)
+    enabled = bool # controls if this node pool should be created
+    name = string # name of this node pool template will be transformed into a fully qualified node pool name
+    role = string # role of the node pool; must be either "user" or "system"
+    vm_sku = string # Azure VM instance type to be used for the pool
+    max_size = number # maximum number of nodes in this pool
+    min_size = number # minimum number of nodes in this pool
+    desired_size = optional(number, 0) # desired number of nodes in this pool; default: min_size
+    max_surge = optional(string, "33%") # number of nodes or percentage of nodes supposed to be created on pool scaling or pool updates
+    kubernetes_version = optional(string) # kubernetes version of all nodes; default: kubernetes version of cluster
+    os_disk_size = number # boot disk size of nodes in GB
+    subnet_id = optional(string) # unique ID of the subnet supposed to host this pool; default: user_pool_subnet_id or system_pool_subnet_id depending on pool role
+    labels = optional(map(string), {}) # optional kubernetes labels to be assigned to all nodes of this pool
+    taints = optional(list(string), []) # optional kubernetes taints to be assigned to all nodes of this pool
   }))
+}
+
+variable system_pool_subnet_id {
+  description = "Unique identifier of the subnet used for all system pool templates, if not specified in the template"
+  type = string
+  default = ""
+}
+
+variable user_pool_subnet_id {
+  description = "Unique identifier of the subnet used for all user pool templates, if not specified in the template"
+  type = string
+  default = ""
 }
 
 variable diagnostic_settings {

@@ -1,6 +1,6 @@
 locals {
-  user_pool_keys = [for np in local.user_pools : np.name]
-  user_pools_by_name = zipmap(local.user_pool_keys, local.user_pools )
+  user_pool_keys = [for npt in local.normalized_user_pool_templates : npt.name]
+  user_pools_by_name = zipmap(local.user_pool_keys, local.normalized_user_pool_templates )
 }
 
 # create a user node group or user pool

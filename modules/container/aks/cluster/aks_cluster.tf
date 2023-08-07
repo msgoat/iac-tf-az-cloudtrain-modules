@@ -22,7 +22,7 @@ resource azurerm_kubernetes_cluster cluster {
 
   # defines the system node pool
   dynamic "default_node_pool" {
-    for_each = toset(local.system_pools)
+    for_each = toset(local.normalized_system_pool_templates)
     content {
       name                         = "system"
       vm_size                      = default_node_pool.value.vm_sku
