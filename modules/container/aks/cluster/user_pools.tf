@@ -21,7 +21,7 @@ resource azurerm_kubernetes_cluster_node_pool user_pool {
   priority = "Regular"
   vnet_subnet_id = each.value.subnet_id
   node_labels = each.value.labels
-  node_taints = each.value.taints
+  node_taints = [for taint in each.value.taints : "${each.value.taints.key}=${each.value.taints.value}:${each.value.taints.effect}"]
   tags = merge({ Name = "np-${var.region_code}-${var.solution_fqn}-${var.kubernetes_cluster_name}-${each.key}"}, local.module_common_tags)
 
   upgrade_settings {

@@ -5,14 +5,14 @@ locals {
     enabled = npt.enabled
     name = npt.name
     role = npt.role
-    vm_sku = npt.vm_sku
+    vm_sku = npt.instance_type
     max_size = npt.max_size
     min_size = npt.min_size
     desired_size = npt.desired_size == 0 ? npt.min_size : npt.desired_size
-    max_surge = npt.max_surge == "" ? "33%" : npt.max_surge
+    max_surge = "33%"
     kubernetes_version = (npt.kubernetes_version == null || npt.kubernetes_version == "") ? var.kubernetes_version : npt.kubernetes_version
-    os_disk_size = npt.os_disk_size
-    subnet_id = (npt.subnet_id == null || npt.subnet_id == "") ? var.system_pool_subnet_id : npt.subnet_id
+    os_disk_size = npt.disk_size
+    subnet_id = var.system_pool_subnet_id
     labels = npt.labels
     taints = npt.taints
   }]
@@ -20,14 +20,14 @@ locals {
     enabled = npt.enabled
     name = npt.name
     role = npt.role
-    vm_sku = npt.vm_sku
+    vm_sku = npt.instance_type
     max_size = npt.max_size
     min_size = npt.min_size
     desired_size = npt.desired_size == 0 ? npt.min_size : npt.desired_size
-    max_surge = npt.max_surge == "" ? "33%" : npt.max_surge
+    max_surge = "33%"
     kubernetes_version = (npt.kubernetes_version == null || npt.kubernetes_version == "") ? var.kubernetes_version : npt.kubernetes_version
-    os_disk_size = npt.os_disk_size
-    subnet_id = (npt.subnet_id == null || npt.subnet_id == "") ? var.user_pool_subnet_id : npt.subnet_id
+    os_disk_size = npt.disk_size
+    subnet_id = var.user_pool_subnet_id
     labels = npt.labels
     taints = npt.taints
   }]

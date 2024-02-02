@@ -47,7 +47,9 @@ resource azurerm_kubernetes_cluster cluster {
 
   dns_prefix = local.aks_cluster_name
 
-  api_server_authorized_ip_ranges = [ "0.0.0.0/0" ]
+  api_server_access_profile {
+    authorized_ip_ranges = var.kubernetes_api_access_cidrs
+  }
 
   automatic_channel_upgrade = "stable"
 
@@ -105,7 +107,6 @@ resource azurerm_kubernetes_cluster cluster {
     network_policy = "azure"
     # all internally used IP addresses and IP address ranges must be set as variables!!!
     dns_service_ip = var.aks_dns_service_ip
-    docker_bridge_cidr = var.aks_docker_bridge_cidr
     service_cidr = var.aks_service_cidr
     outbound_type = "loadBalancer"
     load_balancer_sku = "standard"
@@ -118,7 +119,13 @@ resource azurerm_kubernetes_cluster cluster {
     # TODO: complete block!
   }
 */
-  public_network_access_enabled = true
+
+  storage_profile {
+    blob_driver_enabled = true
+    disk_driver_enabled = true
+    file_driver_enabled = true
+    snapshot_controller_enabled = true
+  }
 
   tags = merge({"Name" = local.aks_cluster_name}, local.module_common_tags)
 

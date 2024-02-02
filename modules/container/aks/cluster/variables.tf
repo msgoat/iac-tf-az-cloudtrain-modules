@@ -142,7 +142,7 @@ variable azure_monitor_enabled {
 
 variable node_pool_templates {
   description = "Information about node pools to be added to the AKS cluster; must contain at least one with role system"
-  type = list(object({
+/*  type = list(object({
     enabled = bool # controls if this node pool should be created
     name = string # name of this node pool template will be transformed into a fully qualified node pool name
     role = string # role of the node pool; must be either "user" or "system"
@@ -156,7 +156,28 @@ variable node_pool_templates {
     subnet_id = optional(string) # unique ID of the subnet supposed to host this pool; default: user_pool_subnet_id or system_pool_subnet_id depending on pool role
     labels = optional(map(string), {}) # optional kubernetes labels to be assigned to all nodes of this pool
     taints = optional(list(string), []) # optional kubernetes taints to be assigned to all nodes of this pool
+  })) */
+  type = list(object({
+    enabled            = optional(bool, true)  # controls if this node group gets actually created
+    managed            = optional(bool, true)  # controls if this node group is a managed or unmanaged node group
+    name               = string                 # logical name of this nodegroup
+    role               = string                 # role of the node group; must be either "user" or "system"
+    kubernetes_version = optional(string, null)       # Kubernetes version of this node group; will default to kubernetes_version of the cluster, if not specified but may differ from kubernetes_version during cluster upgrades
+    min_size           = number       # minimum size of this node group
+    max_size           = number       # maximum size of this node group
+    desired_size       = optional(number, 0)       # desired size of this node group; will default to min_size if set to 0
+    disk_size          = number       # size of attached root volume in GB
+    capacity_type      = string       # defines the purchasing option for the EC2 instances in all node groups
+    instance_type      = string        # virtual machine instance type which should be used for the AWS EKS worker node groups ordered descending by preference
+    labels             = optional(map(string), {})  # Kubernetes labels to be attached to each worker node
+    taints = optional(list(object({
+      key    = string
+      value  = string
+      effect = string
+    })), []) # Kubernetes taints to be attached to each worker node
+    image_type         = optional(string, "AL2_x86_64") # Type of OS images to be used for EC2 instances; possible values are: AL2_x86_64 | AL2_x86_64_GPU | AL2_ARM_64 | CUSTOM | BOTTLEROCKET_ARM_64 | BOTTLEROCKET_x86_64 | BOTTLEROCKET_ARM_64_NVIDIA | BOTTLEROCKET_x86_64_NVIDIA; default is "AL2_x86_64"
   }))
+
 }
 
 variable system_pool_subnet_id {
