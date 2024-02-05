@@ -127,6 +127,13 @@ resource azurerm_kubernetes_cluster cluster {
     snapshot_controller_enabled = true
   }
 
+  # we use our own managed identity for kubelet
+  kubelet_identity {
+    object_id = azurerm_user_assigned_identity.kubelet.principal_id
+    client_id = azurerm_user_assigned_identity.kubelet.client_id
+    user_assigned_identity_id = azurerm_user_assigned_identity.kubelet.id
+  }
+
   tags = merge({"Name" = local.aks_cluster_name}, local.module_common_tags)
 
   lifecycle {
@@ -137,6 +144,7 @@ resource azurerm_kubernetes_cluster cluster {
       network_profile[0].load_balancer_profile[0].idle_timeout_in_minutes
     ]
   }
+
   # wait until the role assignment has been assigned to the AKS cluster identity
   depends_on = [null_resource.wait_for_role_assignments_to_control_plane]
 }

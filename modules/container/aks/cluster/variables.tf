@@ -129,7 +129,7 @@ variable container_registry_id {
 }
 
 variable aks_disk_encryption_enabled {
-  description = "Enables encryption of OS disks and persistent volumes with customer-managed keys"
+  description = "Enables encryption of OS disks and persistent volumes with customer-managed keys; requires key_vault_id to be set. Default: false"
   type = bool
   default = false
 }
@@ -142,21 +142,6 @@ variable azure_monitor_enabled {
 
 variable node_pool_templates {
   description = "Information about node pools to be added to the AKS cluster; must contain at least one with role system"
-/*  type = list(object({
-    enabled = bool # controls if this node pool should be created
-    name = string # name of this node pool template will be transformed into a fully qualified node pool name
-    role = string # role of the node pool; must be either "user" or "system"
-    vm_sku = string # Azure VM instance type to be used for the pool
-    max_size = number # maximum number of nodes in this pool
-    min_size = number # minimum number of nodes in this pool
-    desired_size = optional(number, 0) # desired number of nodes in this pool; default: min_size
-    max_surge = optional(string, "33%") # number of nodes or percentage of nodes supposed to be created on pool scaling or pool updates
-    kubernetes_version = optional(string) # kubernetes version of all nodes; default: kubernetes version of cluster
-    os_disk_size = number # boot disk size of nodes in GB
-    subnet_id = optional(string) # unique ID of the subnet supposed to host this pool; default: user_pool_subnet_id or system_pool_subnet_id depending on pool role
-    labels = optional(map(string), {}) # optional kubernetes labels to be assigned to all nodes of this pool
-    taints = optional(list(string), []) # optional kubernetes taints to be assigned to all nodes of this pool
-  })) */
   type = list(object({
     enabled            = optional(bool, true)  # controls if this node group gets actually created
     managed            = optional(bool, true)  # controls if this node group is a managed or unmanaged node group
