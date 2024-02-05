@@ -1,4 +1,6 @@
 locals {
+  actual_replica_count = var.ensure_high_availability && var.replica_count < 2 ? 2 : var.replica_count
+  helm_chart_name = "cert-manager"
   cm_values = <<EOT
 # Default values for cert-manager.
 # This is a YAML-formatted file.
@@ -35,7 +37,7 @@ global:
 
   leaderElection:
     # Override the namespace used for the leader election lease
-    namespace: ${kubernetes_namespace.cert_manager[0].metadata[0].name}
+    namespace: "${var.kubernetes_namespace_name}"
 
     # The duration that non-leader candidates will wait after observing a
     # leadership renewal until attempting to acquire leadership of a led but
@@ -54,13 +56,21 @@ global:
 
 installCRDs: true
 
-replicaCount: 2
+replicaCount: ${local.actual_replica_count}
 
 strategy: {}
   # type: RollingUpdate
   # rollingUpdate:
   #   maxSurge: 0
   #   maxUnavailable: 1
+
+podDisruptionBudget:
+%{ if var.ensure_high_availability ~}
+  enabled: true
+  maxUnavailable: 1
+%{ else ~}
+  enabled: false
+%{ endif ~}
 
 # Comma separated list of feature gates that should be enabled on the
 # controller pod & webhook pod.
@@ -74,11 +84,6 @@ maxConcurrentChallenges: 60
 # used. This namespace will not be automatically created by the Helm chart.
 clusterResourceNamespace: ""
 
-# This namespace allows you to define where the services will be installed into
-# if not set then they will use the namespace of the release
-# This is helpful when installing cert manager as a chart dependency (sub chart)
-namespace: ""
-
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
@@ -86,11 +91,13 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   # name: ""
   # Optional additional annotations to add to the controller's ServiceAccount
-  # annotations: {}
+  # annotations:
+
   # Automount API credentials for a Service Account.
-  # Optional additional labels to add to the controller's ServiceAccount
-  # labels: {}
   automountServiceAccountToken: true
+  # Optional additional labels to add to the controller's ServiceAccount
+  labels:
+    azure.workload.identity/use: "true"
 
 # Automounting API credentials for a particular pod
 # automountServiceAccountToken: true
@@ -137,9 +144,8 @@ containerSecurityContext:
   capabilities:
     drop:
     - ALL
-  readOnlyRootFilesystem: false
-  runAsNonRoot: true
-
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
 
 volumes: []
 
@@ -151,7 +157,8 @@ volumeMounts: []
 # Optional additional annotations to add to the controller Pods
 # podAnnotations: {}
 
-podLabels: {}
+podLabels:
+  azure.workload.identity/use: "true"
 
 # Optional annotations to add to the controller Service
 # serviceAnnotations: {}
@@ -179,7 +186,7 @@ ingressShim: {}
   # defaultIssuerGroup: ""
 
 prometheus:
-  enabled: true
+  enabled: false
   servicemonitor:
     enabled: false
     prometheusInstance: default
@@ -196,38 +203,49 @@ prometheus:
 # https_proxy: "https://proxy:8080"
 # no_proxy: 127.0.0.1,localhost
 
-%{ if var.node_group_workload_class != "" ~}
-# It's OK to be deployed to the tools pool, too
-tolerations:
-  - key: "group.msg.cloud.kubernetes/workload"
-    operator: "Equal"
-    value: ${var.node_group_workload_class}
-    effect: "NoSchedule"
-%{ endif ~}
-%{ if var.node_group_workload_class != "" ~}
-affinity:
-  # Encourages deployment to the tools pool
-  nodeAffinity:
-    requiredDuringSchedulingIgnoredDuringExecution:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: "group.msg.cloud.kubernetes/workload"
-              operator: In
-              values:
-                - ${var.node_group_workload_class}
-%{ endif ~}
-
-# expects input structure as per specification https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#topologyspreadconstraint-v1-core
+# expects input structure as per specification https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.11/#affinity-v1-core
 # for example:
-#   topologySpreadConstraints:
-#   - maxSkew: 2
-#     topologyKey: topology.kubernetes.io/zone
-#     whenUnsatisfiable: ScheduleAnyway
-#     labelSelector:
-#       matchLabels:
-#         app.kubernetes.io/instance: cert-manager
-#         app.kubernetes.io/component: controller
+#   affinity:
+#     nodeAffinity:
+#      requiredDuringSchedulingIgnoredDuringExecution:
+#        nodeSelectorTerms:
+#        - matchExpressions:
+#          - key: foo.bar.com/role
+#            operator: In
+#            values:
+#            - master
+affinity: {}
+
+# expects input structure as per specification https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.11/#toleration-v1-core
+# for example:
+#   tolerations:
+#   - key: foo.bar.com/role
+#     operator: Equal
+#     value: master
+#     effect: NoSchedule
+tolerations: []
+
+%{ if var.ensure_high_availability ~}
+topologySpreadConstraints:
+- labelSelector:
+    matchLabels:
+      app.kubernetes.io/name: ${local.helm_chart_name}
+      app.kubernetes.io/instance: ${var.helm_release_name}
+      app.kubernetes.io/component: "controller"
+  topologyKey: topology.kubernetes.io/zone
+  maxSkew: 1
+  whenUnsatisfiable: ScheduleAnyway
+- labelSelector:
+    matchLabels:
+      app.kubernetes.io/name: ${local.helm_chart_name}
+      app.kubernetes.io/instance: ${var.helm_release_name}
+      app.kubernetes.io/component: "controller"
+  topologyKey: kubernetes.io/hostname
+  maxSkew: 1
+  whenUnsatisfiable: ScheduleAnyway
+%{ else ~}
 topologySpreadConstraints: []
+%{ endif ~}
 
 webhook:
   replicaCount: 1
@@ -262,6 +280,15 @@ webhook:
     runAsNonRoot: true
     seccompProfile:
       type: RuntimeDefault
+
+  podDisruptionBudget:
+    enabled: false
+
+    minAvailable: 1
+    # maxUnavailable: 1
+
+    # minAvailable and maxUnavailable can either be set to an integer (e.g. 1)
+    # or a percentage value (e.g. 25%)
 
   # Container Security Context to be set on the webhook component container
   # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
@@ -318,27 +345,9 @@ webhook:
   nodeSelector:
     kubernetes.io/os: linux
 
-%{ if var.node_group_workload_class != "" ~}
-  affinity:
-    # Encourages deployment to the tools pool
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-              - key: "group.msg.cloud.kubernetes/workload"
-                operator: In
-                values:
-                  - ${var.node_group_workload_class}
-%{ endif ~}
+  affinity: {}
 
-%{ if var.node_group_workload_class != "" ~}
-# It's OK to be deployed to the tools pool, too
-  tolerations:
-    - key: "group.msg.cloud.kubernetes/workload"
-      operator: "Equal"
-      value: ${var.node_group_workload_class}
-      effect: "NoSchedule"
-%{ endif ~}
+  tolerations: []
 
   topologySpreadConstraints: []
 
@@ -347,6 +356,21 @@ webhook:
 
   # Optional additional labels to add to the Webhook Service
   serviceLabels: {}
+
+  image:
+    repository: quay.io/jetstack/cert-manager-webhook
+    # You can manage a registry with
+    # registry: quay.io
+    # repository: jetstack/cert-manager-webhook
+
+    # Override the image tag to deploy by setting this variable.
+    # If no value is set, the chart's appVersion will be used.
+    # tag: canary
+
+    # Setting a digest will override any tag
+    # digest: sha256:0e072dddd1f7f8fc8909a2ca6f65e76c5f0d2fcfb8be47935ae3457e8bbceb20
+
+    pullPolicy: IfNotPresent
 
   serviceAccount:
     # Specifies whether a service account should be created
@@ -410,6 +434,10 @@ webhook:
         protocol: TCP
       - port: 53
         protocol: UDP
+      # On OpenShift and OKD, the Kubernetes API server listens on
+      # port 6443.
+      - port: 6443
+        protocol: TCP
       to:
       - ipBlock:
           cidr: 0.0.0.0/0
@@ -419,7 +447,7 @@ webhook:
 
 cainjector:
   enabled: true
-  replicaCount: 1
+  replicaCount: ${local.actual_replica_count}
 
   strategy: {}
     # type: RollingUpdate
@@ -434,6 +462,14 @@ cainjector:
     seccompProfile:
       type: RuntimeDefault
 
+  podDisruptionBudget:
+%{ if var.ensure_high_availability ~}
+    enabled: true
+    maxUnavailable: 1
+%{ else ~}
+    enabled: false
+%{ endif ~}
+
   # Container Security Context to be set on the cainjector component container
   # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
   containerSecurityContext:
@@ -443,6 +479,7 @@ cainjector:
       - ALL
     # readOnlyRootFilesystem: true
     # runAsNonRoot: true
+
 
   # Optional additional annotations to add to the cainjector Deployment
   # deploymentAnnotations: {}
@@ -456,37 +493,39 @@ cainjector:
   # Enable profiling for cainjector
   # - --enable-profiling=true
 
-  resources: {}
-    # requests:
-    #   cpu: 10m
-    #   memory: 32Mi
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32Mi
 
   nodeSelector:
     kubernetes.io/os: linux
 
-%{ if var.node_group_workload_class != "" ~}
-  affinity:
-    # Encourages deployment to the tools pool
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-              - key: "group.msg.cloud.kubernetes/workload"
-                operator: In
-                values:
-                  - ${var.node_group_workload_class}
-%{ endif ~}
+  affinity: {}
 
-%{ if var.node_group_workload_class != "" ~}
-# It's OK to be deployed to the tools pool, too
-  tolerations:
-    - key: "group.msg.cloud.kubernetes/workload"
-      operator: "Equal"
-      value: ${var.node_group_workload_class}
-      effect: "NoSchedule"
-%{ endif ~}
+  tolerations: []
 
+%{ if var.ensure_high_availability ~}
+  topologySpreadConstraints:
+  - labelSelector:
+      matchLabels:
+        app.kubernetes.io/name: "cainjector"
+        app.kubernetes.io/instance: ${var.helm_release_name}
+        app.kubernetes.io/component: "cainjector"
+    topologyKey: topology.kubernetes.io/zone
+    maxSkew: 1
+    whenUnsatisfiable: ScheduleAnyway
+  - labelSelector:
+      matchLabels:
+        app.kubernetes.io/name: "cainjector"
+        app.kubernetes.io/instance: ${var.helm_release_name}
+        app.kubernetes.io/component: "cainjector"
+    topologyKey: kubernetes.io/hostname
+    maxSkew: 1
+    whenUnsatisfiable: ScheduleAnyway
+%{ else ~}
   topologySpreadConstraints: []
+%{ endif ~}
 
   # Optional additional labels to add to the CA Injector Pods
   podLabels: {}
@@ -509,6 +548,8 @@ cainjector:
 
   volumes: []
   volumeMounts: []
+
+#acmesolver:
 
 # This startupapicheck is a Helm post-install hook that waits for the webhook
 # endpoints to become available.
@@ -564,27 +605,9 @@ startupapicheck:
   nodeSelector:
     kubernetes.io/os: linux
 
-%{ if var.node_group_workload_class != "" ~}
-  affinity:
-    # Encourages deployment to the tools pool
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-              - key: "group.msg.cloud.kubernetes/workload"
-                operator: In
-                values:
-                  - ${var.node_group_workload_class}
-%{ endif ~}
+  affinity: {}
 
-%{ if var.node_group_workload_class != "" ~}
-# It's OK to be deployed to the tools pool, too
-  tolerations:
-    - key: "group.msg.cloud.kubernetes/workload"
-      operator: "Equal"
-      value: ${var.node_group_workload_class}
-      effect: "NoSchedule"
-%{ endif ~}
+  tolerations: []
 
   # Optional additional labels to add to the startupapicheck Pods
   podLabels: {}
@@ -626,11 +649,10 @@ EOT
 
 # deploys cert manager
 resource helm_release cert_manager {
-  count = var.addon_enabled ? 1 : 0
   name = var.helm_release_name
-  chart = "cert-manager"
-  version = "v1.11.0"
-  namespace = kubernetes_namespace.cert_manager[0].metadata[0].name
+  chart = local.helm_chart_name
+  version = var.helm_chart_version
+  namespace = var.kubernetes_namespace_owned ? kubernetes_namespace.cert_manager[0].metadata[0].name : var.kubernetes_namespace_name
   create_namespace = false
   dependency_update = true
   repository = "https://charts.jetstack.io"

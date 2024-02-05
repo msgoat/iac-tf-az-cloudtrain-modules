@@ -28,10 +28,9 @@ variable solution_fqn {
   type = string
 }
 
-variable addon_enabled {
-  description = "controls if this addon should be installed on the target AKS cluster"
-  type = bool
-  default = true
+variable resource_group_id {
+  description = "Unique identifier of the resource group supposed to own all allocated resources"
+  type = string
 }
 
 variable aks_cluster_id {
@@ -45,10 +44,44 @@ variable kubernetes_namespace_name {
   default = "cert-manager"
 }
 
+variable "kubernetes_namespace_owned" {
+  description = "Controls if the given Kubernetes namespace will be created and destroyed by this module; default: true"
+  type = bool
+  default = true
+}
+
 variable helm_release_name {
   description = "Name of the Helm release used to deploy the cert manager"
   type = string
   default = "cert-manager"
+}
+
+variable "helm_chart_version" {
+  description = "Version of the Helm chart"
+  type = string
+  default = "v1.13.2"
+}
+
+variable "replica_count" {
+  description = "Number of replicas to run"
+  type = number
+  default = 2
+}
+
+variable "dns_zone_id" {
+  description = "Unique identifier of a public DNS supposed contain all public DNS records to route traffic to the Kubernetes cluster"
+  type = string
+}
+
+variable "letsencrypt_account_name" {
+  description = "Lets Encrypt Account name to be used to request certificates"
+  type = string
+}
+
+variable "ensure_high_availability" {
+  description = "Controls if a high availability of this service should be ensured by running at least two pods spread across AZs and nodes"
+  type = bool
+  default = true
 }
 
 variable node_group_workload_class {

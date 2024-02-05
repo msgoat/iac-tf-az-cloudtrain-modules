@@ -1,0 +1,13 @@
+letsencrypt:
+  acme:
+    email: replace_me@example.com
+    server:
+      staging: https://acme-staging-v02.api.letsencrypt.org/directory
+      prod: https://acme-v02.api.letsencrypt.org/directory
+    dnsZones:
+      - replace_me.org
+    azureDns:
+      resourceGroupName: replace_me
+      subscriptionId: replace_me
+      hostedZoneName: replace_me
+      managedIdentityClientId: replace_me

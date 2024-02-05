@@ -1,0 +1,21 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: {{ include "cert-manager-letsencrypt.fullname" . }}-prod
+  labels:
+    {{- include "cert-manager-letsencrypt.labels" . | nindent 4 }}
+spec:
+  acme:
+    email: {{ .Values.letsencrypt.acme.email }}
+    server: {{ .Values.letsencrypt.acme.server.prod }}
+    privateKeySecretRef:
+      name: {{ include "cert-manager-letsencrypt.fullname" . }}-prod
+    solvers:
+      - dns01:
+          azureDNS:
+            resourceGroupName: {{ .Values.letsencrypt.acme.azureDns.resourceGroupName }}
+            subscriptionID: {{ .Values.letsencrypt.acme.azureDns.subscriptionId }}
+            hostedZoneName: {{ .Values.letsencrypt.acme.azureDns.hostedZoneName }}
+            environment: AzurePublicCloud
+            managedIdentity:
+              clientID: {{ .Values.letsencrypt.acme.azureDns.managedIdentityClientId }}

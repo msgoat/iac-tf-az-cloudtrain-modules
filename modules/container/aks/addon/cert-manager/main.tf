@@ -1,18 +1,21 @@
 terraform {
   required_providers {
     azurerm = {
-      version = "~> 3.40"
-    }
-    helm = {
-      version = "~> 2.8"
+      source  = "hashicorp/azurerm"
+      version = "~> 3.0"
     }
     kubernetes = {
-      version = "~> 2.16"
+      source = "hashicorp/kubernetes"
+      version = "~> 2.0"
+    }
+    helm = {
+      source = "hashicorp/helm"
+      version = "~> 2.0"
     }
   }
 }
 
 locals {
-  module_common_tags = var.common_tags
+  module_common_tags = merge(var.common_tags, { TerraformModuleName = "container/aks/addon/cert-manager" })
   solution_fqn = var.solution_fqn
 }
