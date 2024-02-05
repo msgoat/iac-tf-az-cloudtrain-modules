@@ -1,5 +1,4 @@
 resource kubernetes_storage_class_v1 cmk_csi_standard {
-  count = var.addon_enabled ? 1 : 0
   metadata {
     name = "cmk-csi-standard"
     labels = {
@@ -11,13 +10,12 @@ resource kubernetes_storage_class_v1 cmk_csi_standard {
   parameters = {
     skuname = "StandardSSD_LRS"
     kind = "managed"
-    diskEncryptionSetID = var.aks_disk_encryption_set_id
+    diskEncryptionSetID = azurerm_disk_encryption_set.cmk_pvc_encryption.id
   }
   volume_binding_mode = "WaitForFirstConsumer"
 }
 
 resource kubernetes_storage_class_v1 cmk_csi_premium {
-  count = var.addon_enabled ? 1 : 0
   metadata {
     name = "cmk-csi-premium"
     labels = {
@@ -29,7 +27,7 @@ resource kubernetes_storage_class_v1 cmk_csi_premium {
   parameters = {
     skuname = "Premium_LRS"
     kind = "managed"
-    diskEncryptionSetID = var.aks_disk_encryption_set_id
+    diskEncryptionSetID = azurerm_disk_encryption_set.cmk_pvc_encryption.id
   }
   volume_binding_mode = "WaitForFirstConsumer"
 }

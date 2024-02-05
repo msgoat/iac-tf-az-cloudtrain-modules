@@ -28,20 +28,9 @@ variable solution_fqn {
   type = string
 }
 
-variable resource_group_name {
-  description = "The name of the resource group supposed to own all allocated resources"
+variable resource_group_id {
+  description = "Unique identifier of the resource group supposed to own all allocated resources"
   type = string
-}
-
-variable resource_group_location {
-  description = "The location of the resource group supposed to own all allocated resources"
-  type = string
-}
-
-variable addon_enabled {
-  description = "controls if this addon should be installed on the target AKS cluster"
-  type = bool
-  default = true
 }
 
 variable aks_cluster_id {
@@ -49,7 +38,7 @@ variable aks_cluster_id {
   type = string
 }
 
-variable aks_disk_encryption_set_id {
-  description = "Unique identifier of the Azure Disk Encryption Set managing disk encryption with a customer managed key"
+variable key_vault_id {
+  description = "Unique identifier of the Key Vault managing the encryption keys"
   type = string
 }
