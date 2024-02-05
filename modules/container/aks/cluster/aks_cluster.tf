@@ -134,6 +134,10 @@ resource azurerm_kubernetes_cluster cluster {
     user_assigned_identity_id = azurerm_user_assigned_identity.kubelet.id
   }
 
+  # we need the OpenID Connect Issuer for various add-ons (like Workload Identity)
+  oidc_issuer_enabled = true
+  workload_identity_enabled = true
+
   tags = merge({"Name" = local.aks_cluster_name}, local.module_common_tags)
 
   lifecycle {
