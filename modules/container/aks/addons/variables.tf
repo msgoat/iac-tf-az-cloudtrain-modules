@@ -28,15 +28,9 @@ variable solution_fqn {
   type = string
 }
 
-variable resource_group_name {
-  description = "Name of the resource group to own all resources of this environment"
+variable resource_group_id {
+  description = "Unique identifier of the resource group supposed to own all allocated resources"
   type = string
-}
-
-variable resource_group_location {
-  description = "Location of the resource group to own all resources of this environment; assumed to be region_name if left empty"
-  type = string
-  default = ""
 }
 
 variable aks_cluster_id {
@@ -44,28 +38,35 @@ variable aks_cluster_id {
   type = string
 }
 
-variable addon_aad_pod_identity_enabled {
-  description = "controls if the Azure AD Pod Identity addon is installed on the given AKS cluster"
-  type = bool
+variable key_vault_id {
+  description = "Unique identifier of the Key Vault managing all confidential data of this solution"
+  type = string
 }
 
 variable addon_cert_manager_enabled {
   description = "controls if the Kubernetes cert-manager is installed on the given AKS cluster"
   type = bool
+  default = true
 }
 
 variable addon_azure_storage_classes_enabled {
   description = "controls if the additional Azure specific storage classes are installed on the given AKS cluster"
   type = bool
-}
-
-variable aks_disk_encryption_set_id {
-  description = "Unique identifier of the Azure Disk Encryption Set managing disk encryption with a customer managed key"
-  type = string
+  default = true
 }
 
 variable node_group_workload_class {
   description = "Class of the AKS node group this tool stack should be hosted on"
   type = string
   default = ""
+}
+
+variable "dns_zone_id" {
+  description = "Unique identifier of a public DNS supposed contain all public DNS records to route traffic to the Kubernetes cluster"
+  type = string
+}
+
+variable "letsencrypt_account_name" {
+  description = "Lets Encrypt Account name to be used to request certificates"
+  type = string
 }
