@@ -3,7 +3,7 @@
 Adds Azure specific Kubernetes storage classes to the given AKS cluster which provide Kubernetes persistent volumes
 using server-side encryption with customer-managed keys (CMK).
 
-Creates a dedicated Azure Key Vault Key and an Azure Disk Encryption Set referencing the dedicated CMK.
+Uses the Azure Disk Encryption Set attached to the given AKS cluster to encrypt the dynamically provisioned persitent volumes.
 
 The following storage classes are added:
 

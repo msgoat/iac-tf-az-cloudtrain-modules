@@ -1,44 +1,39 @@
-variable region_name {
+variable "region_name" {
   description = "The Azure region to deploy into."
-  type = string
+  type        = string
 }
 
-variable region_code {
+variable "region_code" {
   description = "The code of Azure region to deploy into (supposed to be a meaningful abbreviation of region_name."
-  type = string
+  type        = string
 }
 
-variable common_tags {
+variable "common_tags" {
   description = "Map of common tags to be attached to all managed Azure resources"
-  type = map(string)
+  type        = map(string)
 }
 
-variable solution_name {
+variable "solution_name" {
   description = "Name of this Azure solution"
-  type = string
+  type        = string
 }
 
-variable solution_stage {
+variable "solution_stage" {
   description = "Stage of this Azure solution"
-  type = string
+  type        = string
 }
 
-variable solution_fqn {
+variable "solution_fqn" {
   description = "Fully qualified name of this Azure solution"
-  type = string
+  type        = string
 }
 
-variable resource_group_id {
+variable "resource_group_id" {
   description = "Unique identifier of the resource group supposed to own all allocated resources"
-  type = string
+  type        = string
 }
 
-variable aks_cluster_id {
+variable "aks_cluster_id" {
   description = "Unique identifier of the target AKS cluster"
-  type = string
-}
-
-variable key_vault_id {
-  description = "Unique identifier of the Key Vault managing the encryption keys"
-  type = string
+  type        = string
 }
