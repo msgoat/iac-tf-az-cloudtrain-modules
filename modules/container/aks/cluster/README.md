@@ -3,6 +3,18 @@
 Creates an Azure AKS instance with a secure baseline setup as recommended by Microsoft
 (except the hub-spoke network topology).
 
+Supports the following security features by default:
+* Root volumes of all nodes are encrypted with a dedicated customer-managed key stored in the given Key Vault
+* Temporary volumes and ephemeral volumes are encrypted using encryption at host (can be switched off via variable `encryption_at_host_enabled` if the current Azure subscription does not support it!)
+* Kubernetes secrets are encrypted using a dedicated customer-managed key stored in the given Key Vault
+
+Supports the following network features by default:
+* System pools and user pools are hosted in separate subnets
+
+Enables the following AKS add-ons by default:
+* OpenID Connect Provider
+* Workload Identity 
+ 
 ## Input Variables
 
 see [variables.tf](variables.tf)

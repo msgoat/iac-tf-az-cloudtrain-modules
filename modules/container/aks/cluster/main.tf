@@ -10,5 +10,5 @@ terraform {
 }
 
 locals {
-  module_common_tags = merge(var.common_tags, {TerraformModule = "container/aks/cluster"})
+  module_common_tags = merge(var.common_tags, { TerraformModule = "container/aks/cluster" })
 }
