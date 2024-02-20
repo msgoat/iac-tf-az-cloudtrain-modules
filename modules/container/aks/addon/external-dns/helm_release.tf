@@ -1,7 +1,7 @@
 locals {
   actual_replica_count = var.ensure_high_availability && var.replica_count < 2 ? 2 : var.replica_count
-  helm_chart_name = "external-dns"
-  helm_chart_values = <<EOT
+  helm_chart_name      = "external-dns"
+  helm_chart_values    = <<EOT
 # -- Labels to add to all chart resources.
 commonLabels: {}
 
@@ -106,7 +106,7 @@ nodeSelector: {}
 affinity: {}
 
 # -- Topology spread constraints for `Pod` [scheduling](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/). If an explicit label selector is not provided one will be created from the pod selector labels.
-%{ if var.ensure_high_availability ~}
+%{if var.ensure_high_availability~}
 topologySpreadConstraints:
 - labelSelector:
     matchLabels:
@@ -122,9 +122,9 @@ topologySpreadConstraints:
   topologyKey: kubernetes.io/hostname
   maxSkew: 1
   whenUnsatisfiable: ScheduleAnyway
-%{ else ~}
+%{else~}
 topologySpreadConstraints: []
-%{ endif ~}
+%{endif~}
 
 # -- Node taints which will be tolerated for `Pod` [scheduling](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/).
 tolerations: []
@@ -265,15 +265,15 @@ EOT
 }
 
 # deploys ExternalDNS
-resource helm_release external_dns {
-  name = var.helm_release_name
-  chart = local.helm_chart_name
-  version = var.helm_chart_version
-  namespace = var.kubernetes_namespace_owned ? kubernetes_namespace.external_dns[0].metadata[0].name : var.kubernetes_namespace_name
-  create_namespace = false
+resource "helm_release" "external_dns" {
+  name              = var.helm_release_name
+  chart             = local.helm_chart_name
+  version           = var.helm_chart_version
+  namespace         = var.kubernetes_namespace_owned ? kubernetes_namespace.external_dns[0].metadata[0].name : var.kubernetes_namespace_name
+  create_namespace  = false
   dependency_update = true
-  repository = "https://kubernetes-sigs.github.io/external-dns/"
-  atomic = true
-  cleanup_on_fail = true
-  values = [ local.helm_chart_values ]
+  repository        = "https://kubernetes-sigs.github.io/external-dns/"
+  atomic            = true
+  cleanup_on_fail   = true
+  values            = [local.helm_chart_values]
 }

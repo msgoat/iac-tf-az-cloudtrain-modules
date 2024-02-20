@@ -5,11 +5,11 @@ terraform {
       version = "~> 3.0"
     }
     kubernetes = {
-      source = "hashicorp/kubernetes"
+      source  = "hashicorp/kubernetes"
       version = "~> 2.0"
     }
     helm = {
-      source = "hashicorp/helm"
+      source  = "hashicorp/helm"
       version = "~> 2.0"
     }
   }
@@ -17,5 +17,5 @@ terraform {
 
 locals {
   module_common_tags = merge(var.common_tags, { TerraformModuleName = "container/aks/addon/external-dns" })
-  solution_fqn = var.solution_fqn
+  solution_fqn       = var.solution_fqn
 }
