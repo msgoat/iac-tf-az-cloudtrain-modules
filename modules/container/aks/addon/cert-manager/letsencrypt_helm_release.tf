@@ -25,3 +25,25 @@ resource "helm_release" "letsencrypt" {
   values            = [ local.letencrypt_values ]
   depends_on = [helm_release.cert_manager]
 }
+
+locals {
+  certificate_issuers = [
+    {
+      issuer_name = "letsencrypt-staging"
+      provider_name = "letsencrypt"
+      provider_environment = "TEST"
+    },
+    {
+      issuer_name = "letsencrypt-prod"
+      provider_name = "letsencrypt"
+      provider_environment = "PROD"
+    }
+  ]
+  certificate_issuer_out = [
+    for ci in local.certificate_issuers : {
+      issuer_name = ci.issuer_name
+      provider_name = ci.provider_name
+      provider_environment = ci.provider_environment
+    }
+  ]
+}
