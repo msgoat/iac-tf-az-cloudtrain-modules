@@ -16,6 +16,6 @@ resource "azurerm_public_ip" "gateway" {
 
   lifecycle {
     create_before_destroy = true
-    ignore_changes = [ zones ]
+    ignore_changes        = [zones]
   }
 }
