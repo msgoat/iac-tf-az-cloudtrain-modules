@@ -33,14 +33,19 @@ A changelog can be found in [changelog.md](changelog.md).
 
 ## Provided Terraform modules
 
-| Module Name                                                        | Module Source                            | Description                                                                           |
-|--------------------------------------------------------------------|------------------------------------------|---------------------------------------------------------------------------------------|
-| [base/region](modules/base/region/README.md)            | /modules/base/readme | Returns information about a given Azure region. |
-| [container/aks/cluster](modules/container/aks/cluster/README.md)   | /modules/container/aks/cluster           | Creates a naked AKS Kubernetes cluster.                                               |
-| [network/vnet](modules/network/vnet/README.md)                     | /modules/network/vnet                    | Creates a generic VNets with subnets based on the given subnet templates.             |
-| [network/vnet4aks](modules/network/vnet4aks/README.md)             | /modules/network/vnet4aks                | Creates an opinionated VNet to host an AKS Kubernetes cluster.                        |
-| [security/key-vault](modules/security/key-vault/README.md)         | /modules/security/key-vault              | Creates an Azure Key Vault instance.                                                  |
-| [terraform/remote-state](modules/terraform/remote-state/README.md) | /modules/terraform/remote-state          | Creates a backend for Terraform remote state on Azure.                                |
+| Module Name                                                                                              | Module Source                                      | Description                                                               |
+|----------------------------------------------------------------------------------------------------------|----------------------------------------------------|---------------------------------------------------------------------------|
+| [base/region](modules/base/region/README.md)                                                             | /modules/base/readme                               | Returns information about a given Azure region.                           |
+| [container/aks/addon/azure-storage-classes](modules/container/aks/addon/azure-storage-classes/README.md) | /modules/container/aks/addon/azure-storage-classes | Adds Azure specific Kubernetes storage classes to the given AKS cluster which provide Kubernetes persistent volumes using server-side encryption with customer-managed keys (CMK). |
+| [container/aks/addon/cert-manager](modules/container/aks/addon/cert-manager/README.md)                   | /modules/container/aks/addon/cert-manager          | Installs the `Kubernetes cert-manager` addon on a given AKS cluster.                      |
+| [container/aks/addon/external-dns](modules/container/aks/addon/external-dns/README.md)                   | /modules/container/aks/addon/external-dns          | Installs the [Kubernetes ExternalDNS](https://kubernetes-sigs.github.io/external-dns/v0.12.0/) addon on a given AKS cluster. |
+| [container/aks/addon/ingress-azure](modules/container/aks/addon/ingress-azure/README.md)                 | /modules/container/aks/addon/ingress-azure         | Installs the [Azure Application Gateway Ingress Controller](https://learn.microsoft.com/en-us/azure/application-gateway/ingress-controller-overview) addon on a given AKS cluster. |
+| [container/aks/addons](modules/container/aks/addons/README.md)                             | /modules/container/aks/addons        | Installs an opinionated set of add-ons on a given AKS cluster. |
+| [container/aks/cluster](modules/container/aks/cluster/README.md)                                         | /modules/container/aks/cluster                     | Creates a naked AKS Kubernetes cluster.                                   |
+| [network/vnet](modules/network/vnet/README.md)                                                           | /modules/network/vnet                              | Creates a generic VNets with subnets based on the given subnet templates. |
+| [network/vnet4aks](modules/network/vnet4aks/README.md)                                                   | /modules/network/vnet4aks                          | Creates an opinionated VNet to host an AKS Kubernetes cluster.            |
+| [security/key-vault](modules/security/key-vault/README.md)                                               | /modules/security/key-vault                        | Creates an Azure Key Vault instance.                                      |
+| [terraform/remote-state](modules/terraform/remote-state/README.md)                                       | /modules/terraform/remote-state                    | Creates a backend for Terraform remote state on Azure.                    |
 
 ## TODOs
 
