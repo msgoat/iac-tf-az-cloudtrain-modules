@@ -25,3 +25,32 @@ module "cert_manager" {
   dns_zone_id              = var.dns_zone_id
   letsencrypt_account_name = var.letsencrypt_account_name
 }
+
+module "external_dns" {
+  source            = "../addon/external-dns"
+  count             = 1
+  region_name       = var.region_name
+  region_code       = var.region_code
+  solution_name     = var.solution_name
+  solution_stage    = var.solution_stage
+  solution_fqn      = var.solution_fqn
+  common_tags       = var.common_tags
+  aks_cluster_id    = var.aks_cluster_id
+  resource_group_id = var.resource_group_id
+  dns_zone_id       = var.dns_zone_id
+}
+
+module "ingress_azure" {
+  source                 = "../addon/ingress-azure"
+  count                  = 1
+  region_name            = var.region_name
+  region_code            = var.region_code
+  solution_name          = var.solution_name
+  solution_stage         = var.solution_stage
+  solution_fqn           = var.solution_fqn
+  common_tags            = var.common_tags
+  aks_cluster_id         = var.aks_cluster_id
+  resource_group_id      = var.resource_group_id
+  dns_zone_id            = var.dns_zone_id
+  application_gateway_id = var.application_gateway_id
+}
