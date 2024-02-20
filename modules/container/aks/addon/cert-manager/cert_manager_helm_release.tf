@@ -1,7 +1,7 @@
 locals {
   actual_replica_count = var.ensure_high_availability && var.replica_count < 2 ? 2 : var.replica_count
-  helm_chart_name = "cert-manager"
-  cm_values = <<EOT
+  helm_chart_name      = "cert-manager"
+  cm_values            = <<EOT
 # Default values for cert-manager.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
@@ -65,12 +65,12 @@ strategy: {}
   #   maxUnavailable: 1
 
 podDisruptionBudget:
-%{ if var.ensure_high_availability ~}
+%{if var.ensure_high_availability~}
   enabled: true
   maxUnavailable: 1
-%{ else ~}
+%{else~}
   enabled: false
-%{ endif ~}
+%{endif~}
 
 # Comma separated list of feature gates that should be enabled on the
 # controller pod & webhook pod.
@@ -225,7 +225,7 @@ affinity: {}
 #     effect: NoSchedule
 tolerations: []
 
-%{ if var.ensure_high_availability ~}
+%{if var.ensure_high_availability~}
 topologySpreadConstraints:
 - labelSelector:
     matchLabels:
@@ -243,9 +243,9 @@ topologySpreadConstraints:
   topologyKey: kubernetes.io/hostname
   maxSkew: 1
   whenUnsatisfiable: ScheduleAnyway
-%{ else ~}
+%{else~}
 topologySpreadConstraints: []
-%{ endif ~}
+%{endif~}
 
 webhook:
   replicaCount: 1
@@ -463,12 +463,12 @@ cainjector:
       type: RuntimeDefault
 
   podDisruptionBudget:
-%{ if var.ensure_high_availability ~}
+%{if var.ensure_high_availability~}
     enabled: true
     maxUnavailable: 1
-%{ else ~}
+%{else~}
     enabled: false
-%{ endif ~}
+%{endif~}
 
   # Container Security Context to be set on the cainjector component container
   # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
@@ -505,7 +505,7 @@ cainjector:
 
   tolerations: []
 
-%{ if var.ensure_high_availability ~}
+%{if var.ensure_high_availability~}
   topologySpreadConstraints:
   - labelSelector:
       matchLabels:
@@ -523,9 +523,9 @@ cainjector:
     topologyKey: kubernetes.io/hostname
     maxSkew: 1
     whenUnsatisfiable: ScheduleAnyway
-%{ else ~}
+%{else~}
   topologySpreadConstraints: []
-%{ endif ~}
+%{endif~}
 
   # Optional additional labels to add to the CA Injector Pods
   podLabels: {}
@@ -648,15 +648,15 @@ EOT
 }
 
 # deploys cert manager
-resource helm_release cert_manager {
-  name = var.helm_release_name
-  chart = local.helm_chart_name
-  version = var.helm_chart_version
-  namespace = var.kubernetes_namespace_owned ? kubernetes_namespace.cert_manager[0].metadata[0].name : var.kubernetes_namespace_name
-  create_namespace = false
+resource "helm_release" "cert_manager" {
+  name              = var.helm_release_name
+  chart             = local.helm_chart_name
+  version           = var.helm_chart_version
+  namespace         = var.kubernetes_namespace_owned ? kubernetes_namespace.cert_manager[0].metadata[0].name : var.kubernetes_namespace_name
+  create_namespace  = false
   dependency_update = true
-  repository = "https://charts.jetstack.io"
-  atomic = true
-  cleanup_on_fail = true
-  values = [ local.cm_values ]
+  repository        = "https://charts.jetstack.io"
+  atomic            = true
+  cleanup_on_fail   = true
+  values            = [local.cm_values]
 }
