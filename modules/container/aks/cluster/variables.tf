@@ -207,23 +207,11 @@ variable "diagnostic_settings" {
 variable "aks_addon_agic_enabled" {
   description = "Enables the Azure Application Gateway Ingress Controller"
   type        = bool
-  default     = false
-}
-
-variable "aks_addon_agic_application_gateway_name" {
-  description = "Name of the Application Gateway in front of AKS; only required if `aks_addon_agic_enabled` is true"
-  type        = string
-  default     = ""
+  default     = true
 }
 
 variable "aks_addon_agic_application_gateway_id" {
   description = "Unique identifier of the Application Gateway in front of AKS; only required if `aks_addon_agic_enabled` is true"
-  type        = string
-  default     = ""
-}
-
-variable "aks_addon_agic_application_gateway_subnet_id" {
-  description = "Unique identifier of the subnet supposed to host or hosting the Application Gateway in front of AKS; only required if `aks_addon_agic_enabled` is true."
   type        = string
   default     = ""
 }

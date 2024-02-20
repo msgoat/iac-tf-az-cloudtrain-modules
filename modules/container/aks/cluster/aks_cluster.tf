@@ -6,9 +6,7 @@ locals {
   disabled_agic_settings      = []
   enabled_agic_settings = [
     {
-      gateway_id   = var.aks_addon_agic_application_gateway_id
-      gateway_name = var.aks_addon_agic_application_gateway_id == "" ? var.aks_addon_agic_application_gateway_name : null
-      subnet_id    = var.aks_addon_agic_application_gateway_id == "" ? var.aks_addon_agic_application_gateway_subnet_id : null
+      gateway_id = var.aks_addon_agic_application_gateway_id
     }
   ]
   agic_settings = var.aks_addon_agic_enabled ? local.enabled_agic_settings : local.disabled_agic_settings
@@ -79,9 +77,7 @@ resource "azurerm_kubernetes_cluster" "cluster" {
   dynamic "ingress_application_gateway" {
     for_each = toset(local.agic_settings)
     content {
-      gateway_id   = ingress_application_gateway.value.gateway_id
-      gateway_name = ingress_application_gateway.value.gateway_name
-      subnet_id    = ingress_application_gateway.value.subnet_id
+      gateway_id = ingress_application_gateway.value.gateway_id
     }
   }
 

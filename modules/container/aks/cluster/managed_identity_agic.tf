@@ -18,5 +18,5 @@ resource "azurerm_role_assignment" "agw_contributor" {
   count                = var.aks_addon_agic_enabled ? 1 : 0
   principal_id         = data.azurerm_user_assigned_identity.agic[0].principal_id
   role_definition_name = "Contributor"
-  scope                = local.agic_identity_resource_group_name
+  scope                = data.azurerm_application_gateway.given[0].id
 }
