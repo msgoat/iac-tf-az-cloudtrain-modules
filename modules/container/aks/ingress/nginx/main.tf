@@ -1,17 +1,20 @@
 terraform {
   required_providers {
-    helm = {
-      version = "~> 2.1"
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 3.0"
     }
     kubernetes = {
-      version = "~> 2.1"
+      source  = "hashicorp/kubernetes"
+      version = "~> 2.0"
     }
-    time = {
-      version = "~> 0.7"
+    helm = {
+      source  = "hashicorp/helm"
+      version = "~> 2.0"
     }
   }
 }
 
 locals {
-  module_common_tags = var.common_tags
+  module_common_tags = merge(var.common_tags, { TerraformModuleName = "container/aks/ingress/nginx" })
 }
