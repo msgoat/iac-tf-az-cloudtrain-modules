@@ -1,4 +1,4 @@
-# Terraform Module: aks/addon/application-gateway-ingress 
+# Terraform Module: aks/addon/ingress-azure 
 
 Installs the [Azure Application Gateway Ingress Controller](https://learn.microsoft.com/en-us/azure/application-gateway/ingress-controller-overview) addon on a given AKS cluster.
 
@@ -17,3 +17,6 @@ see [variables.tf](variables.tf)
 see [outputs.tf](outputs.tf)
 
 ## TODO's
+
+* Missing Workload Identity annotations on pod
+* Missing Workload Identity annotations on service account 
