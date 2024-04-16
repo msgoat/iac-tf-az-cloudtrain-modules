@@ -28,13 +28,8 @@ variable solution_fqn {
   type = string
 }
 
-variable resource_group_name {
-  description = "The name of the resource group supposed to own all allocated resources"
-  type = string
-}
-
-variable resource_group_location {
-  description = "The location of the resource group supposed to own all allocated resources"
+variable resource_group_id {
+  description = "Unique identifier of the resource group supposed to own all allocated resources"
   type = string
 }
 

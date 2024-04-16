@@ -9,6 +9,6 @@ resource "azurerm_role_assignment" "creator" {
 resource "azurerm_role_assignment" "admins" {
   for_each             = toset(var.key_vault_admin_group_ids)
   principal_id         = each.value
-  scope                = azurerm_key_vault.vault.id
+  scope                = azurerm_key_vault.this.id
   role_definition_name = "Key Vault Administrator"
 }

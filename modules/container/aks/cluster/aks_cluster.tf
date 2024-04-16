@@ -24,7 +24,7 @@ resource "azurerm_kubernetes_cluster" "cluster" {
     content {
       name                         = "system"
       vm_size                      = default_node_pool.value.vm_sku
-      zones                        = var.names_of_zones_to_span
+      zones                        = var.zones_to_span
       enable_auto_scaling          = true
       min_count                    = default_node_pool.value.min_size
       node_count                   = default_node_pool.value.desired_size

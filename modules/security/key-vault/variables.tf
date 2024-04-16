@@ -3,11 +3,6 @@ variable "region_name" {
   type        = string
 }
 
-variable "region_code" {
-  description = "The code of Azure region to deploy into (supposed to be a meaningful abbreviation of region_name)."
-  type        = string
-}
-
 variable "common_tags" {
   description = "Map of common tags to be attached to all managed Azure resources"
   type        = map(string)
@@ -47,7 +42,6 @@ variable "key_vault_sku" {
 variable "key_vault_admin_group_ids" {
   description = "Unique identifiers of Azure AD groups which grant its members access to this Key Vault"
   type        = list(string)
-  default     = []
 }
 
 variable "soft_delete_retention_days" {

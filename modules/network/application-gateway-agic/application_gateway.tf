@@ -86,4 +86,9 @@ resource "azurerm_application_gateway" "gateway" {
     request_buffering_enabled  = false
     response_buffering_enabled = false
   }
+
+  lifecycle {
+    // Ignore almost all changes since the existing application gateway will be controlled by the AGIC ingress controller
+    ignore_changes = [backend_address_pool, backend_http_settings, frontend_port, http_listener, request_routing_rule, probe, tags, ssl_certificate]
+  }
 }

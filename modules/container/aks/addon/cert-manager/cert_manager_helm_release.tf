@@ -64,12 +64,11 @@ strategy: {}
   #   maxSurge: 0
   #   maxUnavailable: 1
 
+%{if local.actual_replica_count > 1~}
 podDisruptionBudget:
-%{if var.ensure_high_availability~}
   enabled: true
+  minAvailable:
   maxUnavailable: 1
-%{else~}
-  enabled: false
 %{endif~}
 
 # Comma separated list of feature gates that should be enabled on the

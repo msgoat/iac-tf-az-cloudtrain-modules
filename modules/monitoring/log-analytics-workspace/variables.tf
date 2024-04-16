@@ -3,11 +3,6 @@ variable region_name {
   type = string
 }
 
-variable region_code {
-  description = "The code of Azure region to deploy into (supposed to be a meaningful abbreviation of region_name."
-  type = string
-}
-
 variable common_tags {
   description = "Map of common tags to be attached to all managed Azure resources"
   type = map(string)

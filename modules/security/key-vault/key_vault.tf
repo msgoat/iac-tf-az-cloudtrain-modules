@@ -1,8 +1,10 @@
 locals {
-  kv_name = "kv-${var.solution_fqn}-${var.key_vault_name}"
+  kv_name_default = "kv-${module.region.region_info.region_code}-${var.solution_fqn}-${var.key_vault_name}"
+  kv_name_random = "kv${random_string.this.result}"
+  kv_name = length(local.kv_name_default) <= 24 ? local.kv_name_default : local.kv_name_random
 }
 
-resource "azurerm_key_vault" "vault" {
+resource "azurerm_key_vault" "this" {
   name                            = local.kv_name
   location                        = data.azurerm_resource_group.given.location
   resource_group_name             = data.azurerm_resource_group.given.name
@@ -25,4 +27,10 @@ resource "azurerm_key_vault" "vault" {
   }, local.module_common_tags)
 
   depends_on = [azurerm_role_assignment.creator]
+}
+
+resource random_string this {
+  length = 22
+  special = false
+  upper = false
 }

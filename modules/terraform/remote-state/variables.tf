@@ -3,11 +3,6 @@ variable region_name {
   type = string
 }
 
-variable region_code {
-  description = "Code of an Azure region that hosts this solution (like westeu for West Europe)"
-  type = string
-}
-
 variable solution_name {
   description = "Name of this Azure solution"
   type = string

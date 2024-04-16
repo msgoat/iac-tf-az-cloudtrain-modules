@@ -3,11 +3,6 @@ variable "region_name" {
   type        = string
 }
 
-variable "region_code" {
-  description = "The code of Azure region to deploy into (supposed to be a meaningful abbreviation of region_name."
-  type        = string
-}
-
 variable "solution_name" {
   description = "Name of this Azure solution"
   type        = string

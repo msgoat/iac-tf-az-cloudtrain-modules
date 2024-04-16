@@ -50,6 +50,18 @@ variable "kubernetes_namespace_owned" {
   default     = true
 }
 
+variable "kubernetes_ingress_class_name" {
+  description = "Name of the Kubernetes ingress class to be assigned to this ingress controller"
+  type        = string
+  default     = "azure/application-gateway"
+}
+
+variable "kubernetes_default_ingress_class" {
+  description = "Controls if this ingress controller is the default ingress controller on this cluster; default: false"
+  type        = bool
+  default     = false
+}
+
 variable "helm_release_name" {
   description = "Name of the Helm release used to deploy the Application Gateway Ingress Controller"
   type        = string
@@ -59,7 +71,7 @@ variable "helm_release_name" {
 variable "helm_chart_version" {
   description = "Version of the Helm chart"
   type        = string
-  default     = "1.7.2"
+  default     = "1.7.4"
 }
 
 variable "replica_count" {

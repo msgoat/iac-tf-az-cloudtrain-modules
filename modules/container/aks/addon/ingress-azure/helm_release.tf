@@ -15,18 +15,18 @@ kubernetes:
     runAsUser: 0
   containerSecurityContext: {}
   podAnnotations: {}
-  resources: {}
-    #limits:
-    #  cpu: 200m
-    #  memory: 100Mi
-    #requests:
-    #  cpu: 100m
-    #  memory: 100Mi
-  ingressClass: "azure/application-gateway"
+  resources:
+    limits:
+      cpu: 200m
+      memory: 100Mi
+    requests:
+      cpu: 100m
+      memory: 100Mi
+  ingressClass: "${var.kubernetes_ingress_class_name}"
   ingressClassResource:
     name: azure-application-gateway
     enabled: true
-    default: false
+    default: ${var.kubernetes_default_ingress_class}
     controllerValue: "azure/application-gateway"
 appgw:
   environment: AZUREPUBLICCLOUD
@@ -39,7 +39,7 @@ rbac:
 EOT
 }
 
-# deploys ExternalDNS
+# deploys Azure Application Gateway Ingress Controller
 resource "helm_release" "ingress_azure" {
   name              = var.helm_release_name
   chart             = local.helm_chart_name

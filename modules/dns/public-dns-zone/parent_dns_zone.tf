@@ -17,7 +17,7 @@ resource "azurerm_dns_ns_record" "child" {
   name                = local.child_dns_record_name
   zone_name           = data.azurerm_dns_zone.parent[0].name
   resource_group_name = data.azurerm_dns_zone.parent[0].resource_group_name
-  records             = azurerm_dns_zone.public.name_servers
+  records             = azurerm_dns_zone.this.name_servers
   ttl                 = 300
 }
 

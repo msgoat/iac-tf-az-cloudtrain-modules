@@ -72,6 +72,12 @@ variable "public_dns_zone_id" {
   type        = string
 }
 
+variable "host_names" {
+  description = "Host names of all hosts whose traffic should be routed to this application gateway"
+  type        = list(string)
+  default     = []
+}
+
 variable "names_of_zones_to_span" {
   description = "Names of availability zones the application gateway is supposed to span"
   type        = list(string)

@@ -5,8 +5,8 @@ locals {
 
 resource azurerm_user_assigned_identity agw {
   name = local.agw_identity_name
-  resource_group_name = var.resource_group_name
-  location = var.resource_group_location
+  resource_group_name = data.azurerm_resource_group.given.name
+  location = data.azurerm_resource_group.given.location
   tags = merge({ Name = local.agw_identity_name }, local.module_common_tags)
 }
 

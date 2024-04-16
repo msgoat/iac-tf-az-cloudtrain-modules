@@ -10,7 +10,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "user_pool" {
   kubernetes_cluster_id  = azurerm_kubernetes_cluster.cluster.id
   mode                   = "User"
   vm_size                = each.value.vm_sku
-  zones                  = var.names_of_zones_to_span
+  zones                  = var.zones_to_span
   enable_auto_scaling    = true
   max_count              = each.value.max_size
   min_count              = each.value.min_size

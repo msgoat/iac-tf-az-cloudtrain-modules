@@ -1,7 +1,7 @@
 locals {
-  law_name = "law-${var.region_code}-${var.solution_fqn}-${var.workspace_name}"
+  law_name = "law-${module.region.region_info.region_code}-${var.solution_fqn}-${var.workspace_name}"
 }
-resource azurerm_log_analytics_workspace shared {
+resource azurerm_log_analytics_workspace this {
   name = local.law_name
   resource_group_name = data.azurerm_resource_group.given.name
   location = var.region_name
