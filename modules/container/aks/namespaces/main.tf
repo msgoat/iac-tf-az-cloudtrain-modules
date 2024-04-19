@@ -10,5 +10,5 @@ terraform {
 }
 
 locals {
-  module_common_tags = var.common_tags
+  module_common_tags = merge(var.common_tags, { TerraformModuleName = "container/aks/namespaces" })
 }

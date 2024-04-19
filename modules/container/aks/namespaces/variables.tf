@@ -28,13 +28,8 @@ variable solution_fqn {
   type = string
 }
 
-variable resource_group_name {
-  description = "The name of the resource group supposed to own all allocated resources"
-  type = string
-}
-
-variable resource_group_location {
-  description = "The location of the resource group supposed to own all allocated resources"
+variable resource_group_id {
+  description = "Unique identifier of the resource group supposed to own all allocated resources"
   type = string
 }
 
@@ -43,19 +38,11 @@ variable aks_cluster_id {
   type = string
 }
 
-variable kubernetes_namespace_names {
-  description = "names of the Kubernetes namespace"
-  type = list(string)
-}
-
-variable istio_injection_enabled {
-  description = "controls if Istio sidecar injection should be enabled on this namespace"
-  type = bool
-  default = false
-}
-
-variable network_policy_enforced {
-  description = "adds a network policy blocking any inbound traffic, thus enforcing each deployment to provide a network policy"
-  type = bool
-  default = true
+variable "kubernetes_namespace_templates" {
+  description = "Templates for the Kubernetes namespaces to create"
+  type = list(object({
+    name                    = string
+    labels                  = optional(map(string), {})
+    network_policy_enforced = optional(bool, false)
+  }))
 }

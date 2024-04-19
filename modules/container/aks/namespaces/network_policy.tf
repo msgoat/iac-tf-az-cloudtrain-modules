@@ -1,12 +1,14 @@
 locals {
-  network_policy_namespaces = toset( var.network_policy_enforced ? var.kubernetes_namespace_names : [])
+  namespace_templates_with_netpol = [for knt in var.kubernetes_namespace_templates : knt if knt.network_policy_enforced]
+  namespace_names_with_netpol = [for knt in var.kubernetes_namespace_templates : knt.name if knt.network_policy_enforced]
+  namespaces_with_netpol_by_name = zipmap(local.namespace_names_with_netpol, local.namespace_names_with_netpol)
 }
 
-resource kubernetes_network_policy deny_all_ingress {
-  for_each = local.network_policy_namespaces
+resource kubernetes_network_policy this {
+  for_each = local.namespaces_with_netpol_by_name
   metadata {
     name = "deny-all-ingress"
-    namespace = each.value
+    namespace = each.key
     labels = {
       "app.kubernetes.io/name" = "deny-all-ingress"
       "app.kubernetes.io/component" = "network"
@@ -19,5 +21,5 @@ resource kubernetes_network_policy deny_all_ingress {
     pod_selector {}
   }
 
-  depends_on = [ kubernetes_namespace.namespace ]
+  depends_on = [ kubernetes_namespace_v1.this ]
 }
